@@ -37,7 +37,7 @@
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
               <div class="navbar-header">
-                <a class="navbar-brand" href=" ">Dealership Review</a>
+                <a class="navbar-brand" href="/djangoapp">Dealership Review</a>
               </div>
               <ul class="nav navbar-nav">
                 <li><a href="about">About us</a></li>
@@ -51,11 +51,57 @@
                 </li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="signup"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              </ul>
+                {% if user.is_authenticated %}
+                <div class="rightalign">
+                 <div class="dropdown">
+                <button class="dropbtn">{{user.first_name}}</button>
+                <div class="dropdown-content">
+                <a href="{% url 'onlinecourse:logout' %}">Logout</a>
+                </div>
+            </div>
+            </div>
+            {% else %}
+            <div class="rightalign">
+            <div class="dropdown">
+            <form action="{% url 'onlinecourse:registration' %}" method="get">
+                <input class="dropbtn"  type="submit" value="Visitor">
+                <div class="dropdown-content">
+                    <a href="{% url 'onlinecourse:registration' %}">Signup</a>
+                    <a href="{% url 'onlinecourse:login' %}">Login</a>
+                </div>
+                </form>
+            </div>
+            </div>
+            {% endif %}
+            </ul>
             </div>
           </nav>
+
+          {% if course_list %}
+        <div class="container"> <!--Style root div with .container class -->
+        <div class="card-deck"> <!--Style second div with .card-deck class -->
+            {% for course in course_list %}
+            <div class="card" style="width: 36rem;"> <!--Style third level div with .card class -->
+                <img class="card-img-left" src="{{MEDIA_URL}}/{{ course.image }}" width="240px" height="240px"
+                           alt="Course image"> <!--Style card image with .card-img-left class -->
+                <div class="card-body bg-light"> <!--Style root div with .card-body and .bg-light class -->
+                    <h5 class="card-title">{{ course.name }}, <span class="text-success"> <!--Style h5 with .card-title and span with .text-success class -->
+                              {{ course.total_enrollment}} enrolled</span></h5>
+                    <p class="card-text">{{ course.description}}</p> <!--Style card description with .card-text class -->
+                    <form action="{% url 'onlinecourse:enroll' course.id %}" method="post">
+                        {% csrf_token %}
+                        <input class="btn btn-primary" type="submit"
+                               value="Enroll"> <!--Style Enroll button with .btn and .btn-primary class -->
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
+            {% else %}
+            <p>No courses are available.</p>
+
+            {% endif %}
     </body>
 
 </html>
