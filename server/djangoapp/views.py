@@ -43,26 +43,24 @@ def login(request):
         username = request.POST['username']
         password = request.POST['psw']
         # Try to check if provide credential can be authenticated
-        user = authenticate(username=username, password=password)
+        user = auth.authenticate(username=username, password=password)
         if user is not None:
             # If user is valid, call login method to login current user
-            login(request, user)
-            return redirect('djangoapp:index')
+            auth.login(request, user)
+            return redirect('/djangoapp')
         else:
             # If not, return to login page again
+            messages.info(request, 'Credentials Invalid')
             return render(request, 'djangoapp/login.html', context)
     else:
         return render(request, 'djangoapp/login.html', context)
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
 # ...
+@login_required(login_url='login')
 def logout(request):
-    # Get the user object based on session id in request
-    print("Log out the user `{}`".format(request.user.username))
-    # Logout user in the request
-    logout(request)
-    # Redirect user back to course list view
-    return redirect('/djangoapp')
+    auth.logout(request)
+    return redirect('djangoapp/registration')
 
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
@@ -75,6 +73,10 @@ def registration(request):
         return render(request, 'djangoapp/registration.html', context)
     # If it is a POST request
     elif request.method == 'POST':
+        username = request.POST['username']
+        firstname = request.POST['firstname']
+        lastname = request.POST['lastname']
+        password = request.POST['psw']
         # <HINT> Get user information from request.POST
         # <HINT> username, first_name, last_name, password
         user_exist = False
@@ -88,11 +90,11 @@ def registration(request):
         # If it is a new user
         if not user_exist:
             # Create user in auth_user table
-            user = User.objects.create_user(username=username, first_name=firstname, last_name=lastname, password=psw)
+            user = User.objects.create_user(username=username, first_name=firstname, last_name=lastname, password=password)
             user.save()
             # <HINT> Login the user and 
             # redirect to course list page
-            return redirect("djangoapp:/djangoapp")
+            return redirect("/djangoapp")
         else:
             return render(request, 'djangoapp/registration.html', context)
             

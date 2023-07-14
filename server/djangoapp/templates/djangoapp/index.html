@@ -54,8 +54,7 @@
                 {% if user.is_authenticated %}
                 <div class="rightalign">
                  <div class="dropdown">
-                <button class="dropbtn">{{user.first_name}}</button>
-                console.log(user.first_name);
+                <button class="dropbtn">{{user.username}}</button>
                 <div class="dropdown-content">
                 <a href="{% url 'djangoapp:logout' %}">Logout</a>
                 </div>

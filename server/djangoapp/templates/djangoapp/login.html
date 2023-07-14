@@ -54,7 +54,7 @@
                 {% if user.is_authenticated %}
                 <div class="rightalign">
                  <div class="dropdown">
-                <button class="dropbtn">{{user.first_name}}</button>
+                <button class="dropbtn">{{user.username}}</button>
                 <div class="dropdown-content">
                 <a href="{% url 'djangoapp:logout' %}">Logout</a>
                 </div>
@@ -76,6 +76,16 @@
             </ul>
             </div>
           </nav>
+          <div>
+            <style>
+                h5{
+                    color: red;
+                }
+            </style>
+            {% for message in messages %}
+            <h5>{{message}}</h5>
+            {% endfor %}
+            </div>
           <form action="{% url 'djangoapp:login' %}"  method="post">
             {% csrf_token %}
             <div class="container">
