@@ -58,18 +58,18 @@
                  <div class="dropdown">
                 <button class="dropbtn">{{user.first_name}}</button>
                 <div class="dropdown-content">
-                <a href="{% url 'onlinecourse:logout' %}">Logout</a>
+                <a href="{% url 'djangoapp:logout' %}">Logout</a>
                 </div>
             </div>
             </div>
             {% else %}
             <div class="rightalign">
             <div class="dropdown">
-            <form action="{% url 'onlinecourse:registration' %}" method="get">
+            <form action="{% url 'djangoapp:registration' %}" method="get">
                 <input class="dropbtn"  type="submit" value="Visitor">
                 <div class="dropdown-content">
-                    <a href="{% url 'onlinecourse:registration' %}">Signup</a>
-                    <a href="{% url 'onlinecourse:login' %}">Login</a>
+                    <a href="{% url 'djangoapp:registration' %}">Signup</a>
+                    <a href="{% url 'djangoapp:login' %}">Login</a>
                 </div>
                 </form>
             </div>
@@ -80,17 +80,7 @@
           </nav>
     <!-- Add reviews as cards -->
 
-    <div class="container"> <!--Stylize the root div with .container class -->
-        <h2>{{ course.name }}</h2>
-        <div class="card-columns-vertical"> <!--Stylize the second level card columns div with .card-columns-vertical class-->
-            {% for lesson in course.lesson_set.all %}
-            <div class="card"> <!--Stylize the third level lesson div with .card class-->
-                <div class="card-header">Lesson {{ forloop.counter }}: {{ lesson.title }}</div> <!--Stylize the fourth level lesson header  div with .card-header class-->
-                <div class="card-body">{{lesson.content}}</div>  <!--Stylize the fifth level lesson content div with .card-body class-->
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+
 
     </body>
 

@@ -57,18 +57,18 @@
                  <div class="dropdown">
                 <button class="dropbtn">{{user.first_name}}</button>
                 <div class="dropdown-content">
-                <a href="{% url 'onlinecourse:logout' %}">Logout</a>
+                <a href="{% url 'djangoapp:logout' %}">Logout</a>
                 </div>
             </div>
             </div>
             {% else %}
             <div class="rightalign">
             <div class="dropdown">
-            <form action="{% url 'onlinecourse:registration' %}" method="get">
+            <form action="{% url 'djangoapp:registration' %}" method="get">
                 <input class="dropbtn"  type="submit" value="Visitor">
                 <div class="dropdown-content">
-                    <a href="{% url 'onlinecourse:registration' %}">Signup</a>
-                    <a href="{% url 'onlinecourse:login' %}">Login</a>
+                    <a href="{% url 'djangoapp:registration' %}">Signup</a>
+                    <a href="{% url 'djangoapp:login' %}">Login</a>
                 </div>
                 </form>
             </div>

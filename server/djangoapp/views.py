@@ -47,12 +47,12 @@ def login(request):
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('onlinecourse:popular_course_list')
+            return redirect('djangoapp:index')
         else:
             # If not, return to login page again
-            return render(request, 'onlinecourse/user_login.html', context)
+            return render(request, 'djangoapp/login.html', context)
     else:
-        return render(request, 'onlinecourse/user_login.html', context)
+        return render(request, 'djangoapp/login.html', context)
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
 # ...
@@ -72,7 +72,7 @@ def registration(request):
     context = {}
     # If it is a GET request, just render the registration page
     if request.method == 'GET':
-        return render(request, 'onlinecourse/user_registration.html', context)
+        return render(request, 'djangoapp/registration.html', context)
     # If it is a POST request
     elif request.method == 'POST':
         # <HINT> Get user information from request.POST
@@ -88,12 +88,14 @@ def registration(request):
         # If it is a new user
         if not user_exist:
             # Create user in auth_user table
-            user = User.objects.create_user(#<HINT> create the user with above info)
+            user = User.objects.create_user(username=username, first_name=firstname, last_name=lastname, password=psw)
+            user.save()
             # <HINT> Login the user and 
             # redirect to course list page
-            return redirect("onlinecourse:popular_course_list")
+            return redirect("djangoapp:/djangoapp")
         else:
-            return render(request, 'onlinecourse/user_registration.html', context)
+            return render(request, 'djangoapp/registration.html', context)
+            
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     context = {}
@@ -104,8 +106,11 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
+def dealer_details(request):
+    return render(request, 'djangoapp/dealer_details.html')
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
-
+def add_review(request):
+    return render(request, 'djangoapp/add_review.html')
