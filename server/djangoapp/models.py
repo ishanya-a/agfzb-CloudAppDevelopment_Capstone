@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.auth import get_user_model
+import uuid
+from datetime import datetime
 
 
 # Create your models here.
@@ -9,6 +12,20 @@ from django.utils.timezone import now
 # - Description
 # - Any other fields you would like to include in car make model
 # - __str__ method to print a car make object
+from django.db import models
+
+class CarMake(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    founding_year = models.PositiveIntegerField()
+    headquarters = models.CharField(max_length=200)
+    website = models.URLField()
+    logo = models.ImageField(upload_to='car_make_logos/')  # Requires Pillow library for image field
+
+    def __str__(self):
+        return self.name
+
+
 
 
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
