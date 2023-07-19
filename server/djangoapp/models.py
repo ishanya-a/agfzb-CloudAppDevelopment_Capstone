@@ -12,7 +12,6 @@ from datetime import datetime
 # - Description
 # - Any other fields you would like to include in car make model
 # - __str__ method to print a car make object
-from django.db import models
 
 class CarMake(models.Model):
     name = models.CharField(max_length=100)
@@ -20,7 +19,6 @@ class CarMake(models.Model):
     founding_year = models.PositiveIntegerField()
     headquarters = models.CharField(max_length=200)
     website = models.URLField()
-    logo = models.ImageField(upload_to='car_make_logos/')  # Requires Pillow library for image field
 
     def __str__(self):
         return self.name
@@ -36,6 +34,26 @@ class CarMake(models.Model):
 # - Year (DateField)
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
+
+class CarModel(models.Model):
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    dealer_id = models.IntegerField()
+    name = models.CharField(max_length=100)
+    CAR_TYPE_CHOICES = (
+        ('sedan', 'Sedan'),
+        ('suv', 'SUV'),
+        ('wagon', 'Wagon'),
+    )
+    car_type = models.CharField(max_length=20, choices=CAR_TYPE_CHOICES)
+    year = models.DateField()
+    engine_capacity = models.DecimalField(max_digits=4, decimal_places=1)
+    transmission = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.ImageField(upload_to='car_model_images/')  # Requires Pillow library for image field
+
+    def __str__(self):
+        return self.name
+
 
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
