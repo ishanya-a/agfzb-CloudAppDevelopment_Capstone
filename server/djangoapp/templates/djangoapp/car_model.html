@@ -1,0 +1,44 @@
+ <!-- car_model_form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Model</title>
+</head>
+<body>
+    <h1>Add Car Model</h1>
+    <form action='' method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+    <!-- Car Model fields -->
+    <label for="dealer_id">Dealer ID:</label>
+    <input type="number" id="dealer_id" name="dealer_id" required>
+    <br>
+    <label for="car_type">Car Type:</label>
+    <select id="car_type" name="car_type" required>
+        <option value="sedan">Sedan</option>
+        <option value="suv">SUV</option>
+        <option value="wagon">Wagon</option>
+    </select>
+    <br>
+    <label for="name">Car Model Name:</label>
+    <input type="text" id="name" name="name" required>
+    <br>
+    <label for="year">Year:</label>
+    <input type="date" id="year" name="year" required>
+    <br>
+    <label for="engine_capacity">Engine Capacity:</label>
+    <input type="number" step="0.1" id="engine_capacity" name="engine_capacity" required>
+    <br>
+    <label for="transmission">Transmission:</label>
+    <input type="text" id="transmission" name="transmission" required>
+    <br>
+    <label for="price">Price:</label>
+    <input type="number" step="0.01" id="price" name="price" required>
+    <br>
+    <label for="image">Image:</label>
+    <input type="file" id="image" name="image">
+    <br>
+    <input type="submit" value="Save">
+    </form>
+</body>
+</html>

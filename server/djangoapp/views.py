@@ -117,6 +117,66 @@ def dealer_details(request):
 def add_review(request):
     return render(request, 'djangoapp/add_review.html')
 
-
 def car_make(request):
-    return render(request, 'djangoapp/car_make.html')
+    if request.method == "POST":
+        # Get data from the request.POST dictionary
+        name = request.POST['name']
+        description = request.POST['description']
+        founding_year = request.POST['founding_year']
+        headquarters = request.POST['headquarters']
+        website = request.POST['website']
+
+        # Create a new CarMake object
+        car_make = CarMake(
+            name=name,
+            description=description,
+            founding_year=founding_year,
+            headquarters=headquarters,
+            website=website,
+        )
+
+        # Save the CarMake object to the database
+        car_make.save()
+
+        # Redirect to the success page or any other page as needed
+        return redirect('/djangoapp')  # Replace 'success_page' with the name of your success page URL pattern
+    else:
+        # Render the form page if the request method is GET
+        return render(request, 'djangoapp/car_make.html')
+
+def car_model(request):
+    if request.method == "POST":
+        # Get data from the request.POST dictionary
+        # car_make_id = request.POST['car_make']
+        dealer_id = request.POST['dealer_id']
+        name = request.POST['name']
+        car_type = request.POST['car_type']
+        year = request.POST['year']
+        engine_capacity = request.POST['engine_capacity']
+        transmission = request.POST['transmission']
+        price = request.POST['price']
+        image = request.FILES.get('image')  # For handling image upload
+
+            # Assuming 'car_make_id' is the ID of the CarMake object to which this CarModel belongs
+            # car_make = CarMake.objects.get(id=car_make_id)
+
+            # Create a new CarModel object
+        car_model = CarModel(
+            dealer_id=dealer_id,
+            name=name,
+            car_type=car_type,
+            year=year,
+            engine_capacity=engine_capacity,
+            transmission=transmission,
+            price=price,
+            image=image,
+        )
+
+            # Save the CarModel object to the database
+        car_model.save()
+
+            # Redirect to the success page or any other page as needed
+        return redirect('/djangoapp')  # Replace 'success_page' with the name of your success page URL pattern
+    else:
+    # Render the form page if the request method is GET
+        return render(request, 'djangoapp/car_model.html')
