@@ -78,3 +78,31 @@ class CarModel(models.Model):
 #     lession2 = Lesson(title='Lesson 2', content="Django full stack project")
 #     lession2.save()
 #     print("Lesson objects all saved... ")
+
+class CarDealer:
+
+    def __init__(self, id, city, state, st, address, zip, lat, long, short_name, full_name):
+        # Dealer id
+        self.id = id
+        # Dealer city
+        self.city = city
+        # Dealer state
+        self.state = state
+        # Dealer state
+        self.st = st
+        # Dealer address
+        self.address = address
+        # Dealer zip
+        self.zip = zip
+        # Location lat
+        self.lat = lat
+        # Location long
+        self.long = long
+        # Dealer short name
+        self.short_name = short_name
+        # Dealer Full Name
+        self.full_name = full_name
+        
+
+    def __str__(self):
+        return "Dealer name: " + self.full_name
