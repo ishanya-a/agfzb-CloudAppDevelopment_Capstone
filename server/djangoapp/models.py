@@ -60,3 +60,21 @@ class CarModel(models.Model):
 
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
+
+
+# def clean_data():
+#     # Delete all data to start from fresh
+#     Enrollment.objects.all().delete()
+#     User.objects.all().delete()
+#     Learner.objects.all().delete()
+#     Instructor.objects.all().delete()
+#     Course.objects.all().delete()
+#     Lesson.objects.all().delete()
+
+# def write_lessons():
+#     # Add lessons
+#     lession1 = Lesson(title='Lesson 1', content="Object-relational mapping project")
+#     lession1.save()
+#     lession2 = Lesson(title='Lesson 2', content="Django full stack project")
+#     lession2.save()
+#     print("Lesson objects all saved... ")

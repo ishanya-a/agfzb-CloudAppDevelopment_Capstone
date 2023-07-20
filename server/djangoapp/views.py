@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User,auth
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import related models
+from .models import CarMake, CarModel
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -116,3 +116,7 @@ def dealer_details(request):
 # ...
 def add_review(request):
     return render(request, 'djangoapp/add_review.html')
+
+
+def car_make(request):
+    return render(request, 'djangoapp/car_make.html')
