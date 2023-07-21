@@ -100,15 +100,20 @@ def registration(request):
             return render(request, 'djangoapp/registration.html', context)
             
 # Update the `get_dealerships` view to render the index page with a list of dealerships
+from django.http import HttpResponse
+from .restapis import get_dealers_from_cf
+
 def get_dealerships(request):
     if request.method == "GET":
+        state = request.GET.get('state', 'california')  # Get the 'state' query parameter from the request
         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership"
-        # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url)
+        # Get dealers from the URL for the specified state
+        dealerships = get_dealers_from_cf(url, state=state)
         # Concat all dealer's short name
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
         return HttpResponse(dealer_names)
+
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
