@@ -1,6 +1,6 @@
 import requests
 import json
-from .models import CarDealer
+from .models import CarDealer,DealerReview
 from requests.auth import HTTPBasicAuth
 
 
@@ -8,10 +8,6 @@ from requests.auth import HTTPBasicAuth
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
 
-import requests
-import json
-from .models import CarDealer
-from requests.auth import HTTPBasicAuth
 
 def get_request(url, **kwargs):
     print(kwargs)
@@ -79,3 +75,54 @@ def get_dealers_from_cf(url, state):
 
 
 
+import requests
+import json
+
+def get_request_dealerid(url, dealerId):
+    print("GET from {} with dealerId={}".format(url, dealerId))
+    try:
+        # Call get method of requests library with URL and parameters
+        response = requests.get(url, headers={'Content-Type': 'application/json'}, params={'dealerId': dealerId})
+    except:
+        # If any error occurs
+        print("Network exception occurred")
+        return None
+
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+
+    if status_code == 200:
+        json_data = json.loads(response.text)
+        return json_data
+    else:
+        print("Error: Unable to fetch data")
+        return None
+
+
+
+def get_dealer_reviews_from_cf(url, **kwargs):
+    reviews_list = []
+    # Call get_request with a URL parameter
+    json_result = get_request(url)
+    if json_result:
+        # Get the row list in JSON as dealers
+        reviews = json_result["rows"]
+        # For each dealer object
+        for review in reviews:
+            # Get its content in `doc` object
+            review_doc = dealer["review"]
+            # Create a CarDealer object with values in `doc` object
+            review_obj = DealerReview(
+                id=review_doc["id"],
+                name=review_doc["name"],
+                dealership=review_doc["dealership"],
+                review=review_doc["review"],
+                purchase=review_doc["purchase"],
+                purchase_date=review_doc["purchase_date"],
+                car_make=review_doc["car_make"],
+                car_model=review_doc["car_madel"],
+                car_year=review_doc["car_year"]
+            )
+            reviews_list.append(review_obj)
+
+    return reviews_list
