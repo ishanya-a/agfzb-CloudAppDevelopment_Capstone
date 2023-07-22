@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User,auth
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarMake, CarModel
-from .restapis import get_request, get_dealers_from_cf, get_request_dealerid, get_dealer_reviews_from_cf
+from .restapis import get_request, get_dealer_reviews_from_cf
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -193,23 +193,12 @@ def car_model(request):
 
 
 def get_Reviews(request):
-    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review"  # Replace with the actual URL for fetching dealer reviews
-    dealers_list = get_dealer_reviews_from_cf(url)
-
-    if dealers_list:
-        # Process the list of CarDealer objects here
-        reviews = []
-        for dealer in dealers_list:
-            # Assuming you have an API endpoint to fetch reviews for each dealer
-            review_url = f"https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?dealer_Id=23"  # Replace with actual review API URL
-            response = requests.get(review_url)
-            if response.status_code == 200:
-                review_data = response.json()
-                reviews.extend(review_data)  # Assuming the review data is a list of dictionaries
-            else:
-                # Handle error if review data fetch fails for a dealer
-                print(f"Failed to fetch reviews for dealer with id")
-
-        return JsonResponse(reviews, safe=False)  # Returning reviews as JSON
-    else:
-        return JsonResponse([], safe=False)  # Empty list as JSON if no dealers found
+    if request.method == "GET":
+        dealer_Id = request.GET.get('dealer_Id', 23)  # Get the 'state' query parameter from the request
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?dealer_Id=23"
+        # Get dealers from the URL for the specified state
+        reviews = get_dealer_reviews_from_cf(url, dealer_Id=dealer_Id)
+        # Concat all dealer's short name
+        # dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+        return HttpResponse(reviews)

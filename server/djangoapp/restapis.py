@@ -14,7 +14,11 @@ def get_request(url, **kwargs):
     print("GET from {} ".format(url))
     try:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'}, params=kwargs)
+        if 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni':
+            response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+                                    auth=HTTPBasicAuth('apikey', 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'))
+        else:
+            response = requests.get(url, params=params)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -73,44 +77,29 @@ def get_dealers_from_cf(url, state):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 
-
-
-import requests
-import json
-
-def get_request_dealerid(url, dealerId):
-    print("GET from {} with dealerId={}".format(url, dealerId))
-    try:
-        # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'}, params={'dealerId': dealerId})
-    except:
-        # If any error occurs
-        print("Network exception occurred")
-        return None
-
-    status_code = response.status_code
-    print("With status {} ".format(status_code))
-
-    if status_code == 200:
-        json_data = json.loads(response.text)
-        return json_data
-    else:
-        print("Error: Unable to fetch data")
-        return None
+def analyze_review_sentiments(DealerReview):
+    params = dict()
+    params["text"] = kwargs["text"]
+    params["version"] = kwargs["version"]
+    params["features"] = kwargs["features"]
+    params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+    response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+                                    auth=HTTPBasicAuth('apikey', 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'))
 
 
 
-def get_dealer_reviews_from_cf(url, **kwargs):
+def get_dealer_reviews_from_cf(url, dealer_Id):
     reviews_list = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
-    if json_result:
+    json_result = get_request(url, dealer_Id=int(dealer_Id))
+    if json_result and "rows" in json_result:
         # Get the row list in JSON as dealers
         reviews = json_result["rows"]
         # For each dealer object
         for review in reviews:
             # Get its content in `doc` object
-            review_doc = dealer["review"]
+            review_doc = review["review"]
+            review_doc.sentiment= analyze_review_sentiments(review_obj.review)
             # Create a CarDealer object with values in `doc` object
             review_obj = DealerReview(
                 id=review_doc["id"],
@@ -121,7 +110,8 @@ def get_dealer_reviews_from_cf(url, **kwargs):
                 purchase_date=review_doc["purchase_date"],
                 car_make=review_doc["car_make"],
                 car_model=review_doc["car_madel"],
-                car_year=review_doc["car_year"]
+                car_year=review_doc["car_year"],
+                sentiment=review_doc["sentiment"] 
             )
             reviews_list.append(review_obj)
 

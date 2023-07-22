@@ -29,6 +29,7 @@ urlpatterns = [
     path(route='dealer_details', view=views.dealer_details, name='dealer_details'),
     path(route='car_make', view=views.car_make, name='car_make'),
     path(route='car_model', view=views.car_model, name='car_model'),
+    path(route='get_Reviews', view=views.get_Reviews, name='get_Reviews'),
 
     # path for dealer reviews view
 
