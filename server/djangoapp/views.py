@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User,auth
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarMake, CarModel
-from .restapis import get_request, get_dealer_reviews_from_cf
+from .restapis import get_request, get_dealer_reviews_from_cf, post_request
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -113,6 +113,8 @@ def get_dealerships(request):
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
         return HttpResponse(dealer_names)
+    else:
+        return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
@@ -124,7 +126,60 @@ def dealer_details(request):
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
-def add_review(request):
+import requests
+from django.http import HttpResponse
+from django.shortcuts import render
+from datetime import datetime
+from .post_request_function import post_request
+
+def add_review(request, dealer_id, review, name, purchase, purchase_date, car_make, car_model, car_year):
+    # Step 1: Fetch existing documents and count them
+    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review".format(dealership)  # Replace with the actual API endpoint URL
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        existing_reviews = response.json()
+        num_reviews = len(existing_reviews)
+    else:
+        return HttpResponse("Failed to fetch existing reviews.")
+
+    # Step 2: Calculate the new ID as count + 1
+    new_review_id = num_reviews + 1
+
+    # Step 3: Create the review dictionary with the new ID
+    review = {
+        "id": new_review_id,
+        "time": datetime.utcnow().isoformat(),
+        "dealership": int(dealer_id),
+        "review": review,
+        # Add any other attributes defined in your review-post cloud function here
+        "name": name,
+        "purchase": purchase,
+        "another": another,
+        "purchase_date": purchase_date,
+        "car_make": car_make,
+        "car_model": car_model,
+        "car_year": car_year
+    }
+
+    # Step 4: Create the json_payload dictionary
+    json_payload = {
+        "review": review
+    }
+
+    # Step 5: Call the post_request method with the payload
+    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review"  # Replace with the actual URL of the review-post cloud function
+    response_data = post_request(url, json_payload, dealerId=dealer_id)
+
+    # Step 6: Return the result of post_request
+    if response_data:
+        # You can print the post response in the console
+        print(response_data)
+        # Or append it to HttpResponse and render it on the browser
+        return HttpResponse("Review added successfully.")
+    else:
+        return HttpResponse("Failed to add review.")
+
     return render(request, 'djangoapp/add_review.html')
 
 def car_make(request):

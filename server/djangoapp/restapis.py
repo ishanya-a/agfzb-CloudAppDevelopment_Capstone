@@ -15,7 +15,7 @@ def get_request(url, **kwargs):
     try:
         # Call get method of requests library with URL and parameters
         if 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni':
-            response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+            response = requests.get(url, params=kwargs, headers={'Content-Type': 'application/json'},
                                     auth=HTTPBasicAuth('apikey', 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'))
         else:
             response = requests.get(url, params=params)
@@ -38,6 +38,26 @@ def get_request(url, **kwargs):
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
+import requests
+
+def post_request(url, json_payload, **kwargs):
+    try:
+        # Call post method of requests library with URL and JSON payload
+        response = requests.post(url, json=json_payload, **kwargs)
+    except requests.exceptions.RequestException as e:
+        # If any error occurs
+        print("Network exception occurred:", e)
+        return None
+
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+
+    if status_code == 200:
+        json_data = response.json()
+        return json_data
+    else:
+        print("Error: Unable to add review")
+        return None
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
 # def get_dealers_from_cf(url, **kwargs):
@@ -99,7 +119,6 @@ def get_dealer_reviews_from_cf(url, dealer_Id):
         for review in reviews:
             # Get its content in `doc` object
             review_doc = review["review"]
-            review_doc.sentiment= analyze_review_sentiments(review_obj.review)
             # Create a CarDealer object with values in `doc` object
             review_obj = DealerReview(
                 id=review_doc["id"],
@@ -111,8 +130,9 @@ def get_dealer_reviews_from_cf(url, dealer_Id):
                 car_make=review_doc["car_make"],
                 car_model=review_doc["car_madel"],
                 car_year=review_doc["car_year"],
-                sentiment=review_doc["sentiment"] 
+                sentiment=None 
             )
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             reviews_list.append(review_obj)
 
     return reviews_list
