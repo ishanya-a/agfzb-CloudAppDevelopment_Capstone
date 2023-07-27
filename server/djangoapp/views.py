@@ -100,21 +100,41 @@ def registration(request):
             return render(request, 'djangoapp/registration.html', context)
             
 # Update the `get_dealerships` view to render the index page with a list of dealerships
+# from django.http import HttpResponse
+# from .restapis import get_dealers_from_cf
+
+# def get_dealerships(request):
+#     context = {}
+#     if request.method == "GET":
+#         state = request.GET.get('state', 'california')  # Get the 'state' query parameter from the request
+#         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership"
+#         # Get dealers from the URL for the specified state
+#         dealerships = get_dealers_from_cf(url, state=state)
+#         # Concat all dealer's short name
+#         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+#         # Return a list of dealer short name
+#         return HttpResponse(dealer_names)
+#     else:
+#         return render(request, 'djangoapp/index.html', context)
 from django.http import HttpResponse
+from django.shortcuts import render
 from .restapis import get_dealers_from_cf
 
 def get_dealerships(request):
+    context = {}
     if request.method == "GET":
         state = request.GET.get('state', 'california')  # Get the 'state' query parameter from the request
-        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership"
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership?state=california"
         # Get dealers from the URL for the specified state
         dealerships = get_dealers_from_cf(url, state=state)
-        # Concat all dealer's short name
-        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-        # Return a list of dealer short name
-        return HttpResponse(dealer_names)
-    else:
+        # Add the dealerships list to the context
+        context['dealership_list'] = dealerships
+        # Render the index.html template with the context
         return render(request, 'djangoapp/index.html', context)
+    else:
+        # Handle other HTTP methods (e.g., POST, PUT, DELETE) here if needed
+        return HttpResponse("Method not allowed", status=405)
+
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer

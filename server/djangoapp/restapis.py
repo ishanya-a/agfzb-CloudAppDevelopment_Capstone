@@ -29,6 +29,7 @@ def get_request(url, **kwargs):
 
     if status_code == 200:
         json_data = json.loads(response.text)
+        print(json_data)
         return json_data
     else:
         print("Error: Unable to fetch data")
