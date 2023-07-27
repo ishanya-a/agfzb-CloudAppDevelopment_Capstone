@@ -130,28 +130,31 @@ import requests
 from django.http import HttpResponse
 from django.shortcuts import render
 from datetime import datetime
-from .post_request_function import post_request
 
-def add_review(request, dealer_id, review, name, purchase, purchase_date, car_make, car_model, car_year):
+def add_review(request, dealer_id=23):
     # Step 1: Fetch existing documents and count them
-    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review".format(dealership)  # Replace with the actual API endpoint URL
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        existing_reviews = response.json()
-        num_reviews = len(existing_reviews)
-    else:
-        return HttpResponse("Failed to fetch existing reviews.")
+    if not request.user.is_authenticated:
+        return HttpResponse("Only authenticated users can post reviews for a dealer.")
 
     # Step 2: Calculate the new ID as count + 1
     new_review_id = num_reviews + 1
+    review_time = datetime.utcnow().isoformat()
+    dealership_id = int(dealer_id)
+    review_text = request.POST.get("review_text")  # Assuming the review text is sent as a POST parameter
+    name = request.POST.get("name")
+    purchase = request.POST.get("purchase")
+    another = request.POST.get("another")
+    purchase_date = request.POST.get("purchase_date")
+    car_make = request.POST.get("car_make")
+    car_model = request.POST.get("car_model")
+    car_year = request.POST.get("car_year")
 
     # Step 3: Create the review dictionary with the new ID
     review = {
         "id": new_review_id,
-        "time": datetime.utcnow().isoformat(),
-        "dealership": int(dealer_id),
-        "review": review,
+        "time": review_time,
+        "dealership": dealership_id,
+        "review": review_text,
         # Add any other attributes defined in your review-post cloud function here
         "name": name,
         "purchase": purchase,
