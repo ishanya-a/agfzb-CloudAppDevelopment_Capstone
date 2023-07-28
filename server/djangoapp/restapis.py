@@ -12,13 +12,14 @@ from requests.auth import HTTPBasicAuth
 def get_request(url, **kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
+    apikey = kwargs.get('apikey')
     try:
         # Call get method of requests library with URL and parameters
-        if 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni':
+        if apikey:
             response = requests.get(url, params=kwargs, headers={'Content-Type': 'application/json'},
-                                    auth=HTTPBasicAuth('apikey', 'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'))
+                                    auth=HTTPBasicAuth('apikey', apikey))
         else:
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=kwargs)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -29,7 +30,6 @@ def get_request(url, **kwargs):
 
     if status_code == 200:
         json_data = json.loads(response.text)
-        print(json_data)
         return json_data
     else:
         print("Error: Unable to fetch data")
@@ -71,24 +71,24 @@ def post_request(url, json_payload, **kwargs):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
 
-def get_dealers_from_cf(url, state):
+def get_dealers_from_cf(url, state, apikey):
     results = []
     # Call get_request with a URL parameter and state parameter
-    json_result = get_request(url, state=state)
-    if json_result and "rows" in json_result:
+    json_result = get_request(url, state=state, apikey=apikey)
+    if json_result and "result" in json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result["rows"]
+        dealers = json_result["result"]
         # For each dealer object
         for dealer in dealers:
             # Get its content in `doc` object
-            dealer_doc = dealer["doc"]
+            dealer_doc = dealer
             # Create a CarDealer object with values in `doc` object
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
-                                   st=dealer_doc["st"], zip=dealer_doc["zip"])
+                                   st=dealer_doc["st"], state=dealer_doc["state"], zip=dealer_doc["zip"])
             results.append(dealer_obj)
-
+    print(results)
     return results
 
 

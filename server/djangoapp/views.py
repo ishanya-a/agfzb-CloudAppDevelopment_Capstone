@@ -123,10 +123,11 @@ from .restapis import get_dealers_from_cf
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
-        state = request.GET.get('state', 'california')  # Get the 'state' query parameter from the request
-        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership?state=california"
+        state = request.GET.get('state', 'Texas')  # Get the 'state' query parameter from the request
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership"
+        apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
         # Get dealers from the URL for the specified state
-        dealerships = get_dealers_from_cf(url, state=state)
+        dealerships = get_dealers_from_cf(url, state=state, apikey=apikey)
         # Add the dealerships list to the context
         context['dealership_list'] = dealerships
         # Render the index.html template with the context
