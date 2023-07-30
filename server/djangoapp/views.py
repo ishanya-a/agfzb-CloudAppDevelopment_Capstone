@@ -142,7 +142,20 @@ def get_dealerships(request):
 # def get_dealer_details(request, dealer_id):
 # ...
 def dealer_details(request):
-    return render(request, 'djangoapp/dealer_details.html')
+    context = {}
+    if request.method == "GET":
+        dealer_Id = request.GET.get('dealer_Id', '')  # Get the 'state' query parameter from the request
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review"
+        apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
+        # Get dealers from the URL for the specified state
+        reviews = get_dealer_reviews_from_cf(url, dealer_Id=dealer_Id, apikey=apikey)
+        # Add the dealerships list to the context
+        context['review_list'] = reviews
+        # Render the index.html template with the context
+        return render(request, 'djangoapp/dealer_details.html', context)
+    else:
+        # Handle other HTTP methods (e.g., POST, PUT, DELETE) here if needed
+        return HttpResponse("Method not allowed", status=405)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):

@@ -109,10 +109,10 @@ def analyze_review_sentiments(DealerReview):
 
 
 
-def get_dealer_reviews_from_cf(url, dealer_Id):
+def get_dealer_reviews_from_cf(url, dealer_Id, apikey):
     reviews_list = []
     # Call get_request with a URL parameter
-    json_result = get_request(url, dealer_Id=int(dealer_Id))
+    json_result = get_request(url, dealer_Id=int(dealer_Id), apikey=apikey)
     if json_result and "rows" in json_result:
         # Get the row list in JSON as dealers
         reviews = json_result["rows"]
