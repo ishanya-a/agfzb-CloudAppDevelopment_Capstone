@@ -51,6 +51,9 @@
                     <li><a href="#">Dealer3</a></li>
                   </ul>
                 </li> -->
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'djangoapp:add_review' dealer_id=dealer_id %}">Add Review</a></li>
+                {% endif %}
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}

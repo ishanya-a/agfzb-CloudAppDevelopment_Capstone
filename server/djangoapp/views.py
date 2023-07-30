@@ -141,10 +141,10 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 # ...
-def dealer_details(request):
+def dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealer_Id = request.GET.get('dealer_Id', '')  # Get the 'state' query parameter from the request
+        dealer_Id = request.GET.get('dealer_Id', dealer_id)  # Get the 'state' query parameter from the request
         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review"
         apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
         # Get dealers from the URL for the specified state
@@ -165,10 +165,20 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from datetime import datetime
 
-def add_review(request, dealer_id=23):
+def add_review(request, dealer_id):
     # Step 1: Fetch existing documents and count them
     if not request.user.is_authenticated:
         return HttpResponse("Only authenticated users can post reviews for a dealer.")
+    
+    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review" # Replace with the actual API endpoint URL
+    response = requests.get(url)
+
+
+    if response.status_code == 200:
+        existing_reviews = response.json()
+        num_reviews = len(existing_reviews)
+    else:
+        return HttpResponse("Failed to fetch existing reviews.")
 
     # Step 2: Calculate the new ID as count + 1
     new_review_id = num_reviews + 1
@@ -217,7 +227,7 @@ def add_review(request, dealer_id=23):
     else:
         return HttpResponse("Failed to add review.")
 
-    return render(request, 'djangoapp/add_review.html')
+    return render(request, 'djangoapp/add_review.html', {'dealer_id': dealer_id})
 
 def car_make(request):
     if request.method == "POST":
