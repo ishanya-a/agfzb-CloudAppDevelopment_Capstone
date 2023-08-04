@@ -144,7 +144,7 @@ def dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
         dealer_Id = dealer_id
-        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id=dealer_Id"
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id={}".format(dealer_Id)
         apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
         # Get dealers from the URL for the specified state
         reviews = get_dealer_reviews_from_cf(url, dealer_Id=dealer_Id, apikey=apikey)
