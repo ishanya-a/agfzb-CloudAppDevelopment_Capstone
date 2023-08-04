@@ -141,8 +141,7 @@
                     <tr>
                         <td>{{ dealer.id }}</td>
                         <td>{{ dealer.short_name }}</td>
-                        <td><a href="{% url 'djangoapp:dealer_details'%}">{{ dealer.full_name }}</a></td>
-                        <!-- dealer.id  -->
+                        <td><a href="{% url 'djangoapp:dealer_details' dealer.id %}">{{ dealer.full_name }}</a></td>
                         <td>{{ dealer.city }}</td>
                         <td>{{ dealer.address }}</td>
                         <td>{{ dealer.zip }}</td>

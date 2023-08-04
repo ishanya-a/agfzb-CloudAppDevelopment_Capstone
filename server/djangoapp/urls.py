@@ -26,7 +26,7 @@ urlpatterns = [
     path(route='login', view=views.login, name='login'),
     path(route='logout', view=views.login, name='logout'),
     path(route='add_review/<int:dealer_id>', view=views.add_review, name='add_review'),
-    path(route='dealer_details', view=views.dealer_details, name='dealer_details'),
+    path(route='dealer_details/<int:dealer_id>', view=views.dealer_details, name='dealer_details'),
     path(route='car_make', view=views.car_make, name='car_make'),
     path(route='car_model', view=views.car_model, name='car_model'),
     path(route='get_Reviews', view=views.get_Reviews, name='get_Reviews'),

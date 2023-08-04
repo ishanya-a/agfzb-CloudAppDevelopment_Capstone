@@ -4,7 +4,6 @@ from django.contrib.auth.models import User,auth
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarMake, CarModel
 from .restapis import get_request, get_dealer_reviews_from_cf, post_request
-# from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -145,12 +144,14 @@ def dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
         dealer_Id = request.GET.get('dealer_Id', dealer_id)  # Get the 'state' query parameter from the request
-        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review"
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id="
         apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
         # Get dealers from the URL for the specified state
         reviews = get_dealer_reviews_from_cf(url, dealer_Id=dealer_Id, apikey=apikey)
         # Add the dealerships list to the context
         context['review_list'] = reviews
+        # Add the 'dealer_id' to the context
+        context['dealer_id'] = dealer_Id
         # Render the index.html template with the context
         return render(request, 'djangoapp/dealer_details.html', context)
     else:
@@ -170,7 +171,7 @@ def add_review(request, dealer_id):
     if not request.user.is_authenticated:
         return HttpResponse("Only authenticated users can post reviews for a dealer.")
     
-    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review" # Replace with the actual API endpoint URL
+    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review" # Replace with the actual API endpoint URL
     response = requests.get(url)
 
 
@@ -226,8 +227,7 @@ def add_review(request, dealer_id):
         return HttpResponse("Review added successfully.")
     else:
         return HttpResponse("Failed to add review.")
-
-    return render(request, 'djangoapp/add_review.html', {'dealer_id': dealer_id})
+        return render(request, 'djangoapp/add_review.html', {'dealer_id': dealer_id})
 
 def car_make(request):
     if request.method == "POST":

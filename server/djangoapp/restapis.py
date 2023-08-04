@@ -18,6 +18,7 @@ def get_request(url, **kwargs):
         if apikey:
             response = requests.get(url, params=kwargs, headers={'Content-Type': 'application/json'},
                                     auth=HTTPBasicAuth('apikey', apikey))
+            print(response.text)
         else:
             response = requests.get(url, params=kwargs)
     except:
@@ -55,6 +56,7 @@ def post_request(url, json_payload, **kwargs):
 
     if status_code == 200:
         json_data = response.json()
+        print(json_data)
         return json_data
     else:
         print("Error: Unable to add review")
@@ -113,6 +115,7 @@ def get_dealer_reviews_from_cf(url, dealer_Id, apikey):
     reviews_list = []
     # Call get_request with a URL parameter
     json_result = get_request(url, dealer_Id=dealer_Id, apikey=apikey)
+    print(json_result)
     if json_result and "rows" in json_result:
         # Get the row list in JSON as dealers
         reviews = json_result["rows"]
