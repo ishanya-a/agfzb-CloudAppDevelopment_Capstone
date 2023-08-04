@@ -65,7 +65,7 @@ def logout(request):
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
 # ...
-# @login_required(login_url='signin')
+@login_required(login_url='registration')
 def registration(request):
     context = {}
     # If it is a GET request, just render the registration page
@@ -143,17 +143,19 @@ def get_dealerships(request):
 def dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealer_Id = request.GET.get('dealer_Id', dealer_id)  # Get the 'state' query parameter from the request
-        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id="
+        dealer_Id = dealer_id
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id=dealer_Id"
         apikey='PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni'
         # Get dealers from the URL for the specified state
         reviews = get_dealer_reviews_from_cf(url, dealer_Id=dealer_Id, apikey=apikey)
+        print(reviews)
         # Add the dealerships list to the context
         context['review_list'] = reviews
         # Add the 'dealer_id' to the context
         context['dealer_id'] = dealer_Id
+        print(context['review_list'])
         # Render the index.html template with the context
-        return render(request, 'djangoapp/dealer_details.html', context)
+        return render(request, 'djangoapp/dealer_details.html', context, {'dealer_id': dealer_id})
     else:
         # Handle other HTTP methods (e.g., POST, PUT, DELETE) here if needed
         return HttpResponse("Method not allowed", status=405)
