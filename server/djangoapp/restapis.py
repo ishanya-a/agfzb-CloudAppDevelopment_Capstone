@@ -14,7 +14,6 @@ def get_request(url, **kwargs):
     print("GET from {} ".format(url))
     apikey = kwargs.get('apikey')
     try:
-        dealer_Id=int(dealer_Id)
         # Call get method of requests library with URL and parameters
         if apikey:
             response = requests.get(url, params=kwargs, headers={'Content-Type': 'application/json'},
@@ -130,6 +129,7 @@ def analyze_review_sentiments(review_text, api_key, service_url):
 
 def get_dealer_reviews_from_cf(url, dealer_Id, apikey):
     reviews_list = []
+    dealer_Id=int(dealer_Id)
     # Call get_request with a URL parameter
     json_result = get_request(url, dealer_Id=dealer_Id, apikey=apikey)
     if json_result and "matched_reviews" in json_result:
@@ -139,25 +139,32 @@ def get_dealer_reviews_from_cf(url, dealer_Id, apikey):
         for review in reviews:
             # Create a DealerReview object with values in the review dictionary
             review_obj = DealerReview(
-                id=int(review["id"]),
-                name=review["name"],
-                dealership=int(review["dealership"]),
-                review=review["review"],
-                purchase=review["purchase"],
-                purchase_date=review["purchase_date"],
-                car_make=review["car_make"],
-                car_model=review["car_model"],
-                car_year=int(review["car_year"]),
-                sentiment=None 
+                id=int(review.get("id", 0)),  # Use 0 as the default value if "id" is missing
+                name=review.get("name", ""),  # Use an empty string as the default value if "name" is missing
+                dealership=int(review.get("dealership", 0)),  # Use 0 as the default value if "dealership" is missing
+                review=review.get("review", ""),  # Use an empty string as the default value if "review" is missing
+                purchase=review.get("purchase", False),  # Use False as the default value if "purchase" is missing
+                purchase_date=review.get("purchase_date", ""),  # Use an empty string as the default value if "purchase_date" is missing
+                car_make=review.get("car_make", ""),  # Use an empty string as the default value if "car_make" is missing
+                car_model=review.get("car_model", ""),  # Use an empty string as the default value if "car_model" is missing
+                car_year=int(review.get("car_year", 0)),  # Use 0 as the default value if "car_year" is missing
+                sentiment=None
             )
-            sentiment_score, sentiment_label = analyze_review_sentiments(
-                review_obj.review,'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni', 'https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/533419e3-c83c-4be0-aaa6-fe818004a6f0'
-            )
-            review_obj.sentiment = {
-                'score': sentiment_score,
-                'label': sentiment_label
-            }
+            if len(review_obj.review.strip()) >= 10:  # Set an appropriate minimum length (e.g., 10 characters)
+                # Perform sentiment analysis and update review_obj.sentiment
+                sentiment_score, sentiment_label = analyze_review_sentiments(
+                    review_obj.review,'PD07eyJ57AlcLTq2jM-m34rJhndDmEhrlwe40c3b_Pni', 'https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/533419e3-c83c-4be0-aaa6-fe818004a6f0'
+                )
+                review_obj.sentiment = {
+                    'score': sentiment_score,
+                    'label': sentiment_label
+                }
+            else:
+                # Handle reviews with insufficient text (optional)
+                review_obj.sentiment = {
+                    "label": "Unknown",
+                    "score": 0.0
+                }
             reviews_list.append(review_obj)
-            print(reviews_list)
 
     return reviews_list
