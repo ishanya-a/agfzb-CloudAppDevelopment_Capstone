@@ -78,11 +78,26 @@
     <!-- dealer_details.html -->
 
 
-{% block content %}
+    {% block content %}
+    <style>
+        .custom-card-columns {
+            column-count: 3; /* Adjust the number of columns as needed */
+            column-gap: 20px; /* Adjust the gap between cards as needed */
+        }
+
+        .custom-card {
+            background-color: #f7f7f7; /* Grey background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow effect */
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+
     <h1>Dealer Details - Dealer ID: {{ dealer_id }}</h1>
-    <div class="card-columns">
+    <div class="card-columns custom-card-columns">
         {% for review in review_list %}
-            <div class="card">
+            <div class="card custom-card">
                 <img class="card-img-left" src="{% static 'media/emoji/' %}{{ review.sentiment.label }}.png" alt="Sentiment Emoji">
                 <div class="card-body">
                     <h5 class="card-title">Car Model: {{ review.car_model }}</h5>

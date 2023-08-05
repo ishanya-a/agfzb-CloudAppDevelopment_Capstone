@@ -79,6 +79,44 @@
             </ul>
             </div>
           </nav>
+
+        <!-- templates/djangoapp/add_review.html -->
+
+
+        <!-- templates/djangoapp/add_review.html -->
+
+
+        {% block content %}
+            <h1>Add Review - Dealer ID: {{ dealer.id }}</h1>
+            <p>Dealer Name: {{ dealer.name }}</p>
+            <!-- Display other dealer details if needed -->
+
+            <form action="{% url 'djangoapp:add_review' dealer.id %}" method="post">
+                {% csrf_token %}
+                <!-- Add form fields here -->
+                <div>
+                    <label for="car_model">Car Model:</label>
+                    <input type="text" name="car_model" id="car_model" required>
+                </div>
+                <div>
+                    <label for="car_make">Car Make:</label>
+                    <input type="text" name="car_make" id="car_make" required>
+                </div>
+                <div>
+                    <label for="car_year">Purchase Year:</label>
+                    <input type="number" name="car_year" id="car_year" required>
+                </div>
+                <div>
+                    <label for="review">Review:</label>
+                    <textarea class="form-control" name="review" id="review" rows="4" required></textarea>
+                </div>
+                <div>
+                    <button type="submit">Submit Review</button>
+                </div>
+            </form>
+        {% endblock %}
+
+
     </body>
 
 </html>
