@@ -163,74 +163,94 @@ def dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
-import requests
-from django.http import HttpResponse
+
 from django.shortcuts import render
+from django.http import HttpResponse
+import requests
 from datetime import datetime
 
 def add_review(request, dealer_id):
-    # Step 1: Fetch existing documents and count them
-    if not request.user.is_authenticated:
-        return HttpResponse("Only authenticated users can post reviews for a dealer.")
+    if request.method == 'GET':
+        # Query cars with the given dealer_id to be reviewed
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-review?url=/get-review?dealer_Id={}".format(dealer_id) # Replace with the actual API endpoint URL to fetch cars by dealer_id
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            cars = response.json()  # Assuming the API returns a JSON array of cars
+        else:
+            return HttpResponse("Failed to fetch cars for the dealer.")
+
+        # Append the queried cars into context to be used in the <select> dropdown
+        context = {
+            'dealer_id': dealer_id,
+            'cars': cars,
+        }
+
+        return render(request, 'djangoapp/add_review.html',context, {'dealer_id': dealer_id})
+
+    elif request.method == 'POST':
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review" # Replace with the actual API endpoint URL
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            existing_reviews = response.json()
+            num_reviews = len(existing_reviews)
+        else:
+            return HttpResponse("Failed to fetch existing reviews.")
+
+        # Retrieve the necessary review data from the request's POST parameters
+        new_review_id = num_reviews + 1
+        review_text = request.POST.get("review_text")
+        name = request.POST.get("name")
+        purchase = request.POST.get("purchase")
+        another = request.POST.get("another")
+        purchase_date = request.POST.get("purchase_date")
+        car_make = request.POST.get("car_make")
+        car_model = request.POST.get("car_model")
+        car_year = request.POST.get("car_year")
+
+        review_time = datetime.utcnow().isoformat()
+
+        # Format the purchase_date to get only the year
+        purchase_year = datetime.strptime(purchase_date, "%m/%d/%Y").strftime("%Y")
+        # Step 3: Create the review dictionary with the new ID
+        review = {
+            "id": new_review_id,
+            "time": review_time,
+            "dealership": int(dealer_id),
+            "review": review_text,
+            # Add any other attributes defined in your review-post cloud function here
+            "name": name,
+            "purchase": purchase,
+            "another": another,
+            "purchase_date": purchase_date,
+            "car_make": car_make,
+            "car_model": car_model,
+            "car_year": car_year,
+        }
+
+        # Step 4: Create the json_payload dictionary
+        json_payload = {
+            "review": review
+        }
+
+        # Step 5: Call the post_request method with the payload
+        url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review"  # Replace with the actual URL of the review-post cloud function
+        response_data = post_request(url, json_payload, dealerId=dealer_id)
+
+        # Step 6: Return the result of post_request
+        if response_data:
+            # You can print the post response in the console
+            print(response_data)
+            # Or redirect the user to the dealer details page
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+        else:
+            return HttpResponse("Failed to add review.")
+    else:
+        return HttpResponse("Invalid request method.")
+
     
-    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review" # Replace with the actual API endpoint URL
-    response = requests.get(url)
-
-
-    if response.status_code == 200:
-        existing_reviews = response.json()
-        num_reviews = len(existing_reviews)
-    else:
-        return HttpResponse("Failed to fetch existing reviews.")
-
-    # Step 2: Calculate the new ID as count + 1
-    new_review_id = num_reviews + 1
-    review_time = datetime.utcnow().isoformat()
-    dealership_id = int(dealer_id)
-    review_text = request.POST.get("review_text")  # Assuming the review text is sent as a POST parameter
-    name = request.POST.get("name")
-    purchase = request.POST.get("purchase")
-    another = request.POST.get("another")
-    purchase_date = request.POST.get("purchase_date")
-    car_make = request.POST.get("car_make")
-    car_model = request.POST.get("car_model")
-    car_year = request.POST.get("car_year")
-
-    # Step 3: Create the review dictionary with the new ID
-    review = {
-        "id": new_review_id,
-        "time": review_time,
-        "dealership": dealership_id,
-        "review": review_text,
-        # Add any other attributes defined in your review-post cloud function here
-        "name": name,
-        "purchase": purchase,
-        "another": another,
-        "purchase_date": purchase_date,
-        "car_make": car_make,
-        "car_model": car_model,
-        "car_year": car_year
-    }
-
-    # Step 4: Create the json_payload dictionary
-    json_payload = {
-        "review": review
-    }
-
-    # Step 5: Call the post_request method with the payload
-    url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/post-review"  # Replace with the actual URL of the review-post cloud function
-    response_data = post_request(url, json_payload, dealerId=dealer_id)
-
-    # Step 6: Return the result of post_request
-    if response_data:
-        # You can print the post response in the console
-        print(response_data)
-        # Or append it to HttpResponse and render it on the browser
-        return HttpResponse("Review added successfully.")
-    else:
-        return HttpResponse("Failed to add review.")
-        return render(request, 'djangoapp/add_review.html', {'dealer_id': dealer_id})
-
+    
 def car_make(request):
     if request.method == "POST":
         # Get data from the request.POST dictionary

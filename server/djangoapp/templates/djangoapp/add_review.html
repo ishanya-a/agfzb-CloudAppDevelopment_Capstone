@@ -14,6 +14,10 @@
     <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include jQuery UI library -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <style>
         .navbar {
@@ -94,28 +98,37 @@
             <form action="{% url 'djangoapp:add_review' dealer.id %}" method="post">
                 {% csrf_token %}
                 <!-- Add form fields here -->
-                <div>
-                    <label for="car_model">Car Model:</label>
-                    <input type="text" name="car_model" id="car_model" required>
-                </div>
-                <div>
-                    <label for="car_make">Car Make:</label>
-                    <input type="text" name="car_make" id="car_make" required>
-                </div>
-                <div>
-                    <label for="car_year">Purchase Year:</label>
-                    <input type="number" name="car_year" id="car_year" required>
-                </div>
-                <div>
-                    <label for="review">Review:</label>
-                    <textarea class="form-control" name="review" id="review" rows="4" required></textarea>
-                </div>
+                    <!-- Other form elements can be here -->
+                  
+                    <!-- Textarea to receive review content -->
+                    <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
+                  
+                    <!-- Checkbox to ask if users purchased a car from this dealer before or not -->
+                    <label for="purchasecheck">Have you purchased a car from this dealer before?</label>
+                    <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+                    <div class="form-group">
+                        <label for="car">Select a car owned by this dealer:</label>
+                        <select name="car" id="car" class="form-select" required>
+                          <option value="" disabled selected>Select a car</option>
+                          {% for car in cars %}
+                            <option value="{{ car.id }}">{{ car.name }} - {{ car.make.name }} - {{ car.year|date:"Y" }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>   
+                      <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
                 <div>
                     <button type="submit">Submit Review</button>
                 </div>
             </form>
         {% endblock %}
-
+        <script type="text/javascript">
+            // Initialize the datepicker on the date input field
+            $(document).ready(function() {
+              $('.date-own').datepicker({
+                format: 'mm/dd/yyyy'
+              });
+            });
+          </script>
 
     </body>
 
