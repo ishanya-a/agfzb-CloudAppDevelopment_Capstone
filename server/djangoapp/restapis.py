@@ -42,12 +42,12 @@ def get_request(url, **kwargs):
 
 import requests
 
-def post_request(url, json_payload, **kwargs):
+def post_request(url, json_payload):
     try:
         # Call post method of requests library with URL and JSON payload
-        response = requests.post(url, json=json_payload, **kwargs)
+        response = requests.post(url, json=json_payload)
     except requests.exceptions.RequestException as e:
-        # If any error occurs
+        # If any error occurs (e.g., network or HTTP-related errors)
         print("Network exception occurred:", e)
         return None
 
@@ -57,10 +57,10 @@ def post_request(url, json_payload, **kwargs):
     if status_code == 200:
         json_data = response.json()
         print(json_data)
-        return json_data
+        return json_data  # Return the JSON response data on successful response
     else:
         print("Error: Unable to add review")
-        return None
+        return None  # Return None if there's an error or unsuccessful response
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
 # def get_dealers_from_cf(url, **kwargs):

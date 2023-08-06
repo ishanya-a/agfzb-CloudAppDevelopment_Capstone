@@ -90,45 +90,48 @@
         <!-- templates/djangoapp/add_review.html -->
 
 
-        {% block content %}
-            <h1>Add Review - Dealer ID: {{ dealer.id }}</h1>
-            <p>Dealer Name: {{ dealer.name }}</p>
-            <!-- Display other dealer details if needed -->
+    {% block content %}
+    <h2>Add Review</h2>
+    <form action="{% url 'djangoapp:add_review' dealer_id=dealer_id %}" method="post">
+        {% csrf_token %}
+        <!-- Other form elements can be here -->
 
-            <form action="{% url 'djangoapp:add_review' dealer.id %}" method="post">
-                {% csrf_token %}
-                <!-- Add form fields here -->
-                    <!-- Other form elements can be here -->
-                  
-                    <!-- Textarea to receive review content -->
-                    <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
-                  
-                    <!-- Checkbox to ask if users purchased a car from this dealer before or not -->
-                    <label for="purchasecheck">Have you purchased a car from this dealer before?</label>
-                    <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
-                    <div class="form-group">
-                        <label for="car">Select a car owned by this dealer:</label>
-                        <select name="car" id="car" class="form-select" required>
-                          <option value="" disabled selected>Select a car</option>
-                          {% for car in cars %}
-                            <option value="{{ car.id }}">{{ car.name }} - {{ car.make.name }} - {{ car.year|date:"Y" }}</option>
-                          {% endfor %}
-                        </select>
-                      </div>   
-                      <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
-                <div>
-                    <button type="submit">Submit Review</button>
-                </div>
-            </form>
-        {% endblock %}
-        <script type="text/javascript">
-            // Initialize the datepicker on the date input field
-            $(document).ready(function() {
-              $('.date-own').datepicker({
-                format: 'mm/dd/yyyy'
-              });
-            });
-          </script>
+        <!-- Textarea to receive review content -->
+        <label for="content">Enter the review content:</label>
+        <br/>
+        <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
+
+        <!-- Checkbox to ask if users purchased a car from this dealer before or not -->
+        <br/>
+        <input class="form-check-input" type="checkbox" name="purchase" id="purchase" required>&nbsp; &nbsp; &nbsp; &nbsp;
+        <label for="purchase">Have you purchased a car from this dealer before?</label>
+        <br/>
+        <br/>
+        <div class="form-group">
+            <label for="car">Select your car [car_make]:</label>
+            <select name="car_make" id="car" class="form-select" required>
+                <option value="" disabled selected>Select a car</option>
+                {% for car in car_makes %}
+                    <option value="{{ car }}">{{ car }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <label for="purchasedate">Select your purchase date:</label>
+        <input class="date-own form-control" type="text" name="purchase_date" id="purchasedate" required>
+        <br/>
+        <div>
+            <button type="submit">Submit Review</button>
+        </div>
+    </form>
+    {% endblock %}
+    <script type="text/javascript">
+    // Initialize the datepicker on the date input field
+    $(document).ready(function() {
+        $('.date-own').datepicker({
+            format: 'mm/dd/yyyy'
+        });
+    });
+    </script>
 
     </body>
 
