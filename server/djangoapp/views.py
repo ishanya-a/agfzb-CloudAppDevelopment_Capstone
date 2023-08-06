@@ -185,6 +185,7 @@ def add_review(request, dealer_id):
             'dealer_id': dealer_id,
             'cars': cars,
         }
+        print(context)
 
         return render(request, 'djangoapp/add_review.html',context, {'dealer_id': dealer_id})
 
