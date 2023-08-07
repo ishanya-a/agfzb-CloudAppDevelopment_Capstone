@@ -65,7 +65,6 @@ def logout(request):
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
 # ...
-@login_required(login_url='registration')
 def registration(request):
     context = {}
     # If it is a GET request, just render the registration page
@@ -102,23 +101,11 @@ def registration(request):
 # from django.http import HttpResponse
 # from .restapis import get_dealers_from_cf
 
-# def get_dealerships(request):
-#     context = {}
-#     if request.method == "GET":
-#         state = request.GET.get('state', 'california')  # Get the 'state' query parameter from the request
-#         url = "https://eu-gb.functions.appdomain.cloud/api/v1/web/4ee50bfd-3284-45d1-8f8b-8fec618ddb96/dealership-package/get-dealership"
-#         # Get dealers from the URL for the specified state
-#         dealerships = get_dealers_from_cf(url, state=state)
-#         # Concat all dealer's short name
-#         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
-#         # Return a list of dealer short name
-#         return HttpResponse(dealer_names)
-#     else:
-#         return render(request, 'djangoapp/index.html', context)
 from django.http import HttpResponse
 from django.shortcuts import render
 from .restapis import get_dealers_from_cf
 
+@login_required(login_url='login')
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
